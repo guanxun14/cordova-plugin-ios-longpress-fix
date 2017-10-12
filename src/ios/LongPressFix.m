@@ -14,28 +14,39 @@
 
   self.lpgr.allowableMovement = 100.0f;
 
-  NSArray *views = self.webView.subviews;
-  if (views.count == 0) {
-    NSLog(@"No webview subviews found, not applying the longpress fix");
-    return;
-  }
-  for (int i=0; i<views.count; i++) {
-    UIView *webViewScrollView = views[i];
-    if ([webViewScrollView isKindOfClass:[UIScrollView class]]) {
-      NSArray *webViewScrollViewSubViews = webViewScrollView.subviews;
-      UIView *browser = webViewScrollViewSubViews[0];
-      [browser addGestureRecognizer:self.lpgr];
-      NSLog(@"Applied longpress fix");
-      break;
-    }
-  }
+  /* UPGRADE: I DON'T KNOW WHY THIS WORKS TO STOP LONGPRESS ON EVERYTHING EXCEPT INPUTS AND CONTENTEDITABLES, BUT I'LL TAKE IT. */
+  // NSArray *views = self.webView.subviews;
+  // if (views.count == 0) {
+  //   NSLog(@"No webview subviews found, not applying the longpress fix");
+  //   return;
+  // }
+  // for (int i=0; i<views.count; i++) {
+  //   UIView *webViewScrollView = views[i];
+  //   if ([webViewScrollView isKindOfClass:[UIScrollView class]]) {
+  //     NSArray *webViewScrollViewSubViews = webViewScrollView.subviews;
+  //     UIView *browser = webViewScrollViewSubViews[0];
+  //     [browser addGestureRecognizer:self.lpgr];
+  //     NSLog(@"Applied longpress fix");
+  //     break;
+  //   }
+  // }
 }
 
 - (void)handleLongPressGestures:(UILongPressGestureRecognizer *)sender {
   if ([sender isEqual:self.lpgr]) {
     if (sender.state == UIGestureRecognizerStateBegan) {
        // since we may touches of 0.08s we no longer log these (would flood the log)
-       //NSLog(@"Ignoring a longpress in order to suppress the magnifying glass (iOS9 quirk)");
+       // NSLog(@"Ignoring a longpress in order to suppress the magnifying glass (iOS9 quirk)");
+    }
+    // UPGRADE: Try adding / removing the gesture recognizer here instead.
+    NSArray *views = self.webView.subviews;
+    for (int i=0; i<views.count; i++) {
+      UIView *webViewScrollView = views[i];
+      if ([webViewScrollView isKindOfClass:[UIScrollView class]]) {
+        NSArray *webViewScrollViewSubViews = webViewScrollView.subviews;
+        UIView *browser = webViewScrollViewSubViews[0];
+        NSLog(@"--> browser detected on long press");
+      }
     }
   }
 }
